@@ -1,4 +1,6 @@
 var builder = WebApplication.CreateBuilder(args);
+IConfiguration config = builder.Configuration;
+string connectionString = config.GetConnectionString("AzureStorage");
 
 // Add services to the container.
 

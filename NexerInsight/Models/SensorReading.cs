@@ -7,9 +7,13 @@
 
         internal static SensorReading FromStringData(string data)
         {
-            SensorReading sensorReading = new SensorReading();
+            SensorReading sensorReading = new();
             string[] obj = data.Split(';');
+
             sensorReading.Date = Convert.ToDateTime(obj[0]);
+
+            if (obj[1][0] == ',')
+                obj[1] = "0" + obj[1];
             sensorReading.MeasuredValue = Convert.ToDouble(obj[1]);
             return sensorReading;
         }

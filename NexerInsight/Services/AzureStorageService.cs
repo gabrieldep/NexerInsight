@@ -14,5 +14,11 @@ namespace NexerInsight.Services
         internal BlobContainerClient GetBlobContainerClient(string blobName) => new BlobServiceClient(_connectionString).GetBlobContainerClient(blobName);
 
         internal static Stream GetStreamFromBlobClient(BlobClient blobClient) => blobClient.OpenRead();
+
+        internal static Stream GetHistoricalStream(string deviceId, string sensorType, BlobContainerClient containerClient)
+        {
+            var blobClient = containerClient.GetBlobClient($"{deviceId}/{sensorType}/historical.zip");
+            return GetStreamFromBlobClient(blobClient);
+        }
     }
 }

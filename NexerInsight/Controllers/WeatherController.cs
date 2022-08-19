@@ -13,54 +13,38 @@ namespace NexerInsight.Controllers
     [Route("[controller]")]
     public class WeatherController : ControllerBase
     {
-        private readonly ILogger<WeatherController> _logger;
-        private readonly IConfiguration _configuration;
+        private readonly AzureStorageService _azureService;
+        private readonly BlobContainerClient _containerClient;
 
-        public WeatherController(ILogger<WeatherController> logger, IConfiguration configuration)
+        public WeatherController(IConfiguration configuration)
         {
-            _logger = logger;
-            _configuration = configuration;
+            _azureService = new AzureStorageService(configuration);
+            _containerClient = _azureService.GetBlobContainerClient("iotbackend");
         }
 
         [HttpGet("GetData")]
         public IActionResult GetData(DateTime date, string sensorType, string deviceId)
         {
-            var azureService = new AzureStorageService(_configuration);
-
             if (!Enum.TryParse(typeof(SensorType), sensorType.ToLower(), out _))
                 return StatusCode((int)HttpStatusCode.BadRequest, new { message = "This sensorType doesn't exists" });
-            BlobContainerClient containerClient = azureService.GetBlobContainerClient("iotbackend");
-            var blobClient = containerClient.GetBlobClient($"{deviceId}/{sensorType}/{date:yyyy-MM-dd}.csv");
-            if (blobClient.Exists())
-            {
-                Stream strFile = AzureStorageService.GetStreamFromBlobClient(blobClient);
-                var dados = ArchiveService.GetArrayFromStream(strFile);
-                return StatusCode((int)HttpStatusCode.OK, dados);
-            }
 
-            blobClient = containerClient.GetBlobClient($"{deviceId}/{sensorType}/historical.zip");
-            Stream str = AzureStorageService.GetStreamFromBlobClient(blobClient);
+            var blobClient = _containerClient.GetBlobClient($"{deviceId}/{sensorType}/{date:yyyy-MM-dd}.csv");
+            if (blobClient.Exists())
+                return StatusCode((int)HttpStatusCode.OK, ArchiveService.GetArrayFromStream(blobClient.OpenRead()));
+
+            Stream str = AzureStorageService.GetHistoricalStream(deviceId, sensorType, _containerClient);
             using ZipArchive package = new(str, ZipArchiveMode.Read);
             ZipArchiveEntry? a = package.Entries.FirstOrDefault(e => e.Name == $"{date:yyyy-MM-dd}.csv");
-            if (a == null)
-                return StatusCode((int)HttpStatusCode.NotFound, new {message = "This info was not found on our historical"});
 
-            Stream fileStream = a.Open();
-            return StatusCode((int)HttpStatusCode.OK, ArchiveService.GetArrayFromStream(fileStream));
+            if (a == null)
+                return StatusCode((int)HttpStatusCode.NotFound, new { message = "This info was not found on our historical" });
+            return StatusCode((int)HttpStatusCode.OK, ArchiveService.GetArrayFromStream(a.Open()));
         }
 
         [HttpGet("GetDataForDevice")]
         public IActionResult GetDataForDevice(DateTime date)
         {
-            BlobContainerClient containerClient = new AzureStorageService(_configuration).GetBlobContainerClient("iotbackend");
-
-            BlobClient blobClient = containerClient.GetBlobClient($"dockan/humidity/historical.zip");
-            Stream str = AzureStorageService.GetStreamFromBlobClient(blobClient);
-            using ZipArchive package = new(str, ZipArchiveMode.Read);
-            ZipArchiveEntry? a = package.Entries.First(e => e.Name == $"{date:yyyy-MM-dd}.csv");
-            var fileStream = a.Open();
-            ArchiveService.GetArrayFromStream(fileStream);
-            return StatusCode((int)HttpStatusCode.OK, ArchiveService.GetArrayFromStream(fileStream));
+            return StatusCode((int)HttpStatusCode.OK);
         }
     }
 }

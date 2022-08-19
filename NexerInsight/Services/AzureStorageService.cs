@@ -11,6 +11,9 @@ namespace NexerInsight.Services
             _connectionString = configuration.GetConnectionString("AzureStorage");
         }
 
+        internal BlobClient GetBlobClient(string deviceId, string sensorType, DateTime date, BlobContainerClient blobContainer) =>
+            blobContainer.GetBlobClient($"{deviceId}/{sensorType}/{date:yyyy-MM-dd}.csv");
+
         internal BlobContainerClient GetBlobContainerClient(string blobName) => new BlobServiceClient(_connectionString).GetBlobContainerClient(blobName);
 
         internal static Stream GetStreamFromBlobClient(BlobClient blobClient) => blobClient.OpenRead();

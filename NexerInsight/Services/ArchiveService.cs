@@ -10,7 +10,7 @@ namespace NexerInsight.Services
         /// </summary>
         /// <param name="archive">Stream with the csv file.</param>
         /// <returns>A list with data from csv</returns>
-        internal static IEnumerable<SensorReading> GetArrayFromStream(Stream archive)
+        public static IEnumerable<SensorReading> GetArrayFromStream(Stream archive)
         {
             IList<SensorReading> values = new List<SensorReading>();
             StreamReader reader = new(archive);

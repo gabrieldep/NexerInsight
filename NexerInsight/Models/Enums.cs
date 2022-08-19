@@ -4,9 +4,9 @@
     {
         public enum SensorType
         {
-            Temperature,
-            Humidity,
-            Rainfall
+            temperature,
+            humidity,
+            rainfall
         }
     }
 }

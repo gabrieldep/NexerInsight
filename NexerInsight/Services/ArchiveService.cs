@@ -14,12 +14,5 @@ namespace NexerInsight.Services
                 values.Add(SensorReading.FromStringData(line));
             return values;
         }
-
-        internal static ZipArchiveEntry? GetZipFileEntry(string fileName, Stream str)
-        {
-            using ZipArchive package = new(str, ZipArchiveMode.Read);
-            ZipArchiveEntry? a = package.Entries.FirstOrDefault(e => e.Name == fileName);
-            return a;
-        }
     }
 }

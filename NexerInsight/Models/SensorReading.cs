@@ -5,6 +5,11 @@
         public DateTime Date { get; set; }
         public double MeasuredValue { get; set; }
 
+        /// <summary>
+        /// Cast a csv string to object
+        /// </summary>
+        /// <param name="data">String with csv data</param>
+        /// <returns>A sensorreading object</returns>
         internal static SensorReading FromStringData(string data)
         {
             SensorReading sensorReading = new();

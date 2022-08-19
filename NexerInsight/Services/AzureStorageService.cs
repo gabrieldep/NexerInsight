@@ -13,6 +13,14 @@ namespace NexerInsight.Services
             _connectionString = configuration.GetConnectionString("AzureStorage");
         }
 
+        /// <summary>
+        /// Get the data from azure storage
+        /// </summary>
+        /// <param name="deviceId">Device id to search</param>
+        /// <param name="sensorType">Sensor type to search</param>
+        /// <param name="date">Date to search</param>
+        /// <param name="containerClient">BlobContainerClient of azure storage</param>
+        /// <returns></returns>
         internal static IEnumerable<SensorReading> GetSensorData(string deviceId, Enums.SensorType sensorType, DateTime date, BlobContainerClient containerClient)
         {
             IEnumerable<SensorReading> sensorData = new List<SensorReading>();
@@ -32,6 +40,13 @@ namespace NexerInsight.Services
 
         internal BlobContainerClient GetBlobContainerClient(string blobName) => new BlobServiceClient(_connectionString).GetBlobContainerClient(blobName);
 
+        /// <summary>
+        /// Get the stream from the zipped history.
+        /// </summary>
+        /// <param name="deviceId">Device Id</param>
+        /// <param name="sensorType">Sensor type</param>
+        /// <param name="containerClient">BlobContainerClient of azure storage</param>
+        /// <returns></returns>
         internal static Stream GetHistoricalStream(string deviceId, string sensorType, BlobContainerClient containerClient)
         {
             var blobClient = containerClient.GetBlobClient($"{deviceId}/{sensorType}/historical.zip");

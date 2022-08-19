@@ -5,6 +5,11 @@ namespace NexerInsight.Services
 {
     public class ArchiveService
     {
+        /// <summary>
+        /// Get an IEnumerable<SensorReading> from a csv.</SensorReading>
+        /// </summary>
+        /// <param name="archive">Stream with the csv file.</param>
+        /// <returns>A list with data from csv</returns>
         internal static IEnumerable<SensorReading> GetArrayFromStream(Stream archive)
         {
             IList<SensorReading> values = new List<SensorReading>();

@@ -24,17 +24,16 @@ namespace NexerInsight.Services
         internal static IEnumerable<SensorReading> GetSensorData(string deviceId, Enums.SensorType sensorType, DateTime date, BlobContainerClient containerClient)
         {
             IEnumerable<SensorReading> sensorData = new List<SensorReading>();
+
             var tempData = containerClient.GetBlobClient($"{deviceId}/{sensorType}/{date:yyyy-MM-dd}.csv");
             if (tempData.Exists())
-                sensorData = ArchiveService.GetArrayFromStream(tempData.OpenRead());
-            else
-            {
-                Stream str = GetHistoricalStream(deviceId, sensorType.ToString(), containerClient);
-                using ZipArchive package = new(str, ZipArchiveMode.Read);
-                ZipArchiveEntry? a = package.Entries.FirstOrDefault(e => e.Name == $"{date:yyyy-MM-dd}.csv");
-                if (a != null)
-                    sensorData = ArchiveService.GetArrayFromStream(a.Open());
-            }
+                return ArchiveService.GetArrayFromStream(tempData.OpenRead());
+
+            Stream str = GetHistoricalStream(deviceId, sensorType.ToString(), containerClient);
+            using ZipArchive package = new(str, ZipArchiveMode.Read);
+            ZipArchiveEntry? a = package.Entries.FirstOrDefault(e => e.Name == $"{date:yyyy-MM-dd}.csv");
+            if (a != null)
+                sensorData = ArchiveService.GetArrayFromStream(a.Open());
             return sensorData;
         }
 

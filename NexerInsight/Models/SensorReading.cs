@@ -10,7 +10,7 @@
         /// </summary>
         /// <param name="data">String with csv data</param>
         /// <returns>A sensorreading object</returns>
-        internal static SensorReading FromStringData(string data)
+        public static SensorReading FromStringData(string data)
         {
             SensorReading sensorReading = new();
             string[] obj = data.Split(';');

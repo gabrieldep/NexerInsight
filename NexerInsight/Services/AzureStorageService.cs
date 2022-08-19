@@ -29,11 +29,16 @@ namespace NexerInsight.Services
             if (tempData.Exists())
                 return ArchiveService.GetArrayFromStream(tempData.OpenRead());
 
-            Stream str = GetHistoricalStream(deviceId, sensorType.ToString(), containerClient);
-            using ZipArchive package = new(str, ZipArchiveMode.Read);
-            ZipArchiveEntry? a = package.Entries.FirstOrDefault(e => e.Name == $"{date:yyyy-MM-dd}.csv");
-            if (a != null)
-                sensorData = ArchiveService.GetArrayFromStream(a.Open());
+            var blobClient = containerClient.GetBlobClient($"{deviceId}/{sensorType}/historical.zip");
+            if (blobClient.Exists())
+            {
+                Stream str = blobClient.OpenRead();
+
+                using ZipArchive package = new(str, ZipArchiveMode.Read);
+                ZipArchiveEntry? a = package.Entries.FirstOrDefault(e => e.Name == $"{date:yyyy-MM-dd}.csv");
+                if (a != null)
+                    sensorData = ArchiveService.GetArrayFromStream(a.Open());
+            }
             return sensorData;
         }
 

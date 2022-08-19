@@ -24,28 +24,28 @@ namespace NexerInsightTest
             var list = new List<SensorReading>();
             SensorReading sr = new()
             {
-                Date = DateTime.Parse("2019-01-10T00:01:05"),
+                Date = Convert.ToDateTime("2019-01-10T00:01:05"),
                 MeasuredValue = 9.41
             };
             list.Add(sr);
 
             sr = new()
             {
-                Date = DateTime.Parse("2019-01-10T00:01:10"),
+                Date = Convert.ToDateTime("2019-01-10T00:01:10"),
                 MeasuredValue = 9.40
             };
             list.Add(sr);
 
             sr = new()
             {
-                Date = DateTime.Parse("2019-01-10T00:01:20"),
+                Date = Convert.ToDateTime("2019-01-10T00:01:20"),
                 MeasuredValue = 9.39
             };
             list.Add(sr);
 
             sr = new()
             {
-                Date = DateTime.Parse("2019-01-10T00:01:35"),
+                Date = Convert.ToDateTime("2019-01-10T00:01:35"),
                 MeasuredValue = 9.38
             };
             list.Add(sr);

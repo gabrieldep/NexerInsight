@@ -15,7 +15,7 @@ namespace NexerInsightTest
             string date = "2019-01-10T00:01:05";
             SensorReading sr = new()
             {
-                Date = DateTime.Parse(date),
+                Date = Convert.ToDateTime(date),
                 MeasuredValue = 9.41
             };
 

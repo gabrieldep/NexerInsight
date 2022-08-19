@@ -26,7 +26,7 @@ namespace NexerInsight.Controllers
         public IActionResult GetData(DateTime date, string sensorType, string deviceId)
         {
             if (!Enum.TryParse(typeof(SensorType), sensorType.ToLower(), out _))
-                return StatusCode((int)HttpStatusCode.BadRequest, new { message = "This sensorType doesn't exists" });
+                return StatusCode((int)HttpStatusCode.BadRequest, new { message = "This sensorType doesn't exist" });
             IEnumerable<SensorReading> sensorData = AzureStorageService
                 .GetSensorData(deviceId, (SensorType)Enum.Parse(typeof(SensorType), sensorType), date, _containerClient);
             return StatusCode((int)HttpStatusCode.OK, sensorData);

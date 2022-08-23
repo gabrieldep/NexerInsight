@@ -32,29 +32,16 @@ namespace NexerInsight.Services
             var blobClient = containerClient.GetBlobClient($"{deviceId}/{sensorType}/historical.zip");
             if (blobClient.Exists())
             {
-                Stream str = blobClient.OpenRead();
+                using Stream str = blobClient.OpenRead();
 
                 using ZipArchive package = new(str, ZipArchiveMode.Read);
-                ZipArchiveEntry? a = package.Entries.FirstOrDefault(e => e.Name == $"{date:yyyy-MM-dd}.csv");
-                if (a != null)
-                    sensorData = ArchiveService.GetArrayFromStream(a.Open());
+                ZipArchiveEntry? zipArchive = package.Entries.FirstOrDefault(e => e.Name == $"{date:yyyy-MM-dd}.csv");
+                if (zipArchive != null)
+                    sensorData = ArchiveService.GetArrayFromStream(zipArchive.Open());
             }
             return sensorData;
         }
 
         internal BlobContainerClient GetBlobContainerClient(string blobName) => new BlobServiceClient(_connectionString).GetBlobContainerClient(blobName);
-
-        /// <summary>
-        /// Get the stream from the zipped history.
-        /// </summary>
-        /// <param name="deviceId">Device Id</param>
-        /// <param name="sensorType">Sensor type</param>
-        /// <param name="containerClient">BlobContainerClient of azure storage</param>
-        /// <returns></returns>
-        internal static Stream GetHistoricalStream(string deviceId, string sensorType, BlobContainerClient containerClient)
-        {
-            var blobClient = containerClient.GetBlobClient($"{deviceId}/{sensorType}/historical.zip");
-            return blobClient.OpenRead();
-        }
     }
 }
